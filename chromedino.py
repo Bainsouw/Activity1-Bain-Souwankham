@@ -11,15 +11,10 @@ pygame.init()
 
 # Global Constants
 
-SCREEN_HEIGHT = 800
-SCREEN_WIDTH = 1200
-SCREEN = pygame.display.set_mode(
-    (SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
 
-WINDOW_HEIGHT = 600  # The height of your game window
-GROUND_IMAGE_HEIGHT = 100  # The height of your ground image
-
-GROUND_HEIGHT = WINDOW_HEIGHT - GROUND_IMAGE_HEIGHT
+SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 1100
+SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 pygame.display.set_caption("Chrome Dino Runner")
 
@@ -80,6 +75,7 @@ class Dinosaur:
         self.image = self.run_img[0].convert_alpha()
         # Apply a red overlay
         self.image.fill((255, 0, 0, 128), special_flags=pygame.BLEND_RGBA_MULT)
+
         self.dino_rect = self.image.get_rect()
         self.dino_rect.x = self.X_POS
         self.dino_rect.y = self.Y_POS
@@ -111,6 +107,7 @@ class Dinosaur:
     def duck(self):
         self.image = self.duck_img[self.step_index // 5].convert_alpha()
         self.image.fill((255, 0, 0, 128), special_flags=pygame.BLEND_RGBA_MULT)
+
         self.dino_rect = self.image.get_rect()
         self.dino_rect.x = self.X_POS
         self.dino_rect.y = self.Y_POS_DUCK
@@ -119,6 +116,7 @@ class Dinosaur:
     def run(self):
         self.image = self.run_img[self.step_index // 5].convert_alpha()
         self.image.fill((255, 0, 0, 128), special_flags=pygame.BLEND_RGBA_MULT)
+
         self.dino_rect = self.image.get_rect()
         self.dino_rect.x = self.X_POS
         self.dino_rect.y = self.Y_POS
@@ -127,6 +125,7 @@ class Dinosaur:
     def jump(self):
         self.image = self.jump_img.convert_alpha()
         self.image.fill((255, 0, 0, 128), special_flags=pygame.BLEND_RGBA_MULT)
+
         if self.dino_jump:
             self.dino_rect.y -= self.jump_vel * 4
             self.jump_vel -= 0.8
@@ -145,6 +144,7 @@ class Cloud:
         self.image = CLOUD.convert_alpha()
         # Apply a blue overlay
         self.image.fill((0, 0, 255, 128), special_flags=pygame.BLEND_RGBA_MULT)
+
         self.width = self.image.get_width()
 
     def update(self):
@@ -164,21 +164,13 @@ class Obstacle:
         for img in self.image:
             # Apply a green overlay to each image
             img.fill((255, 255, 0, 128), special_flags=pygame.BLEND_RGBA_MULT)
+        self.image = image
         self.type = type
         self.rect = self.image[self.type].get_rect()
         self.rect.x = SCREEN_WIDTH
-        self.jump = False
 
     def update(self):
         self.rect.x -= game_speed
-        if self.rect.x < SCREEN_WIDTH // 2 and not self.jump:
-            self.rect.y -= 10  # Move the obstacle up
-            if self.rect.y < 0:  # If the obstacle has moved off the top of the screen
-                self.jump = True  # Stop it from moving up further
-        elif self.jump:
-            self.rect.y += 10  # Move the obstacle down
-            if self.rect.y + self.rect.height > GROUND_HEIGHT:  # If the obstacle has moved back to the ground
-                self.jump = False  # Allow it to jump again
         if self.rect.x < -self.rect.width:
             obstacles.pop()
 
@@ -271,6 +263,7 @@ def main():
             "Game Paused, Press 'u' to Unpause", True, FONT_COLOR)
         textRect = text.get_rect()
         textRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 3)
+
         SCREEN.blit(text, textRect)
         pygame.display.update()
 
@@ -358,6 +351,7 @@ def menu(death_count):
                 )  # Read all file in case values are not on a single line
                 # Convert strings to ints
                 score_ints = [int(x) for x in score.split()]
+
             highscore = max(score_ints)  # sum all elements of the list
             hs_score_text = font.render(
                 "High Score : " + str(highscore), True, FONT_COLOR
